@@ -1,11 +1,18 @@
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native'
 import api from './src/services/api'
 import Filmes from './src/Filmes'
 
 export default function App() {
   const [filmes, setFilmes] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadFilmes() {
@@ -13,20 +20,29 @@ export default function App() {
       //console.log(response.data)
 
       setFilmes(response.data)
+      setLoading(false)
     }
 
     loadFilmes()
   }, [])
 
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={filmes}
-        keyExtractor={item => String(item.id)}
-        renderItem={({ item }) => <Filmes data={item} />}
-      />
-    </View>
-  )
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator color="#121212" size={45} />
+      </View>
+    )
+  } else {
+    return (
+      <View style={styles.container}>
+        <FlatList
+          data={filmes}
+          keyExtractor={item => String(item.id)}
+          renderItem={({ item }) => <Filmes data={item} />}
+        />
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({
